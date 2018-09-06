@@ -220,6 +220,18 @@ def unet(channel, height, width):
 
 model = unet(train_x.shape[3], train_x.shape[1], train_x.shape[2])
 model.compile(optimizer = Adam(lr = 1e-4), loss = 'binary_crossentropy', metrics = ['accuracy'])
+model_json = model.to_json()
+with open("model.json", "w") as json_file:
+    json_file.write(model_json)
+model.save_weights("model.h5")
+ 
+
+json_file = open('model.json', 'r')
+loaded_model_json = json_file.read()
+json_file.close()
+loaded_model = model_from_json(loaded_model_json)
+loaded_model.load_weights("model.h5")
+loaded_model.compile(optimizer = Adam(lr = 1e-4), loss = 'binary_crossentropy', metrics=['accuracy']
 model.fit(train_x, train_y, epochs = 100, batch_size = 1)
 new_image = model.predict(test_image)
 
